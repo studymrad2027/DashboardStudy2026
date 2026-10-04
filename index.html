@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CYBER_RAD // FRCR Part 2A Command Deck</title>
+  <title>CYBER_RAD // SBA 1 & 2 Command Deck</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -578,7 +578,7 @@
   <div class="container">
     <!-- Header -->
     <header>
-      <h1 class="cyber-title">FRCR RAD // COMMAND DECK</h1>
+      <h1 class="cyber-title">MASTER RAD // COMMAND DECK</h1>
       <p class="cyber-subtitle">Radiology SBA Exam Revision & Repository Tracker 2026</p>
     </header>
 
@@ -642,7 +642,7 @@
           Connect your custom Google Apps Script endpoint to sync revision statuses across devices.
         </p>
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-          <input type="text" id="appscript-url" class="cyber-input" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" />
+          <input type="text" id="appscript-url" class="cyber-input" placeholder="https://script.google.com/macros/s/AKfycbz3HX8FeImJ2okkRx6rVrp_XSQJ631xtfdSwn1TIDiuWhFrz9HXA401vVKbh-iFibbS/exec" />
           <button class="cyber-btn" id="sync-push-btn">PUSH DATA</button>
           <button class="cyber-btn cyber-btn-magenta" id="sync-pull-btn">FETCH DATA</button>
         </div>
@@ -786,7 +786,9 @@
       });
     }
 
-    let appScriptUrl = localStorage.getItem('frcr_appscript_url') || '';
+    // Direct Google Apps Script Integration
+    const HARDCODED_APPSCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3HX8FeImJ2okkRx6rVrp_XSQJ631xtfdSwn1TIDiuWhFrz9HXA401vVKbh-iFibbS/exec';
+    let appScriptUrl = localStorage.getItem('frcr_appscript_url') || HARDCODED_APPSCRIPT_URL;
     let currentFilter = 'all';
     let searchQuery = '';
 
@@ -958,7 +960,7 @@
     const appScriptInput = document.getElementById('appscript-url');
     appScriptInput.value = appScriptUrl;
     appScriptInput.addEventListener('change', (e) => {
-      appScriptUrl = e.target.value.trim();
+      appScriptUrl = e.target.value.trim() || HARDCODED_APPSCRIPT_URL;
       localStorage.setItem('frcr_appscript_url', appScriptUrl);
     });
 
