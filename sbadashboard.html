@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CYBER_RAD // FRCR Part 2A Command Deck</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --panel-bg: rgba(10, 15, 30, 0.75);
+      --panel-border: rgba(0, 243, 255, 0.25);
+      --panel-glow: rgba(0, 243, 255, 0.1);
+      
+      --neon-cyan: #00f3ff;
+      --neon-magenta: #ff007f;
+      --neon-yellow: #facc15;
+      --neon-green: #00ff66;
+      --neon-purple: #9d4edd;
+      
+      --text-main: #f1f5f9;
+      --text-dim: #64748b;
+      --text-glow: #00f3ff;
+
+      --font-head: 'Orbitron', sans-serif;
+      --font-body: 'Rajdhani', sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 1.5rem 1rem 3rem 1rem;
+      position: relative;
+    }
+
+    /* Cyber Matrix Canvas Background */
+    #cyber-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    /* CRT Scanline Overlay */
+    .crt-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.25) 50%
+      );
+      background-size: 100% 4px;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Holographic Header */
+    header {
+      text-align: center;
+      padding: 1rem 0;
+      position: relative;
+    }
+
+    .cyber-title {
+      font-family: var(--font-head);
+      font-size: 2.4rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #fff;
+      text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
+      display: inline-block;
+      position: relative;
+    }
+
+    .cyber-subtitle {
+      font-family: var(--font-mono);
+      color: var(--neon-magenta);
+      letter-spacing: 2px;
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+      text-transform: uppercase;
+    }
+
+    /* Cyber Panel Base Styling */
+    .cyber-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      box-shadow: 0 0 15px var(--panel-glow), inset 0 0 15px var(--panel-glow);
+      backdrop-filter: blur(12px);
+      border-radius: 8px;
+      padding: 1.5rem;
+      position: relative;
+      clip-path: polygon(
+        0 12px, 12px 0, 
+        calc(100% - 12px) 0, 100% 12px, 
+        100% calc(100% - 12px), calc(100% - 12px) 100%, 
+        12px 100%, 0 calc(100% - 12px)
+      );
+    }
+
+    .cyber-panel::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+    }
+
+    .cyber-panel-title {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cyber-panel-title::before {
+      content: '>';
+      color: var(--neon-magenta);
+      font-weight: bold;
+    }
+
+    /* HUD Countdown Timer */
+    .countdown-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      max-width: 680px;
+      margin: 1rem auto 0 auto;
+    }
+
+    .hud-box {
+      background: rgba(3, 7, 18, 0.8);
+      border: 1px solid rgba(0, 243, 255, 0.3);
+      padding: 1rem 0.5rem;
+      text-align: center;
+      position: relative;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .hud-box:hover {
+      border-color: var(--neon-magenta);
+      box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+    }
+
+    .hud-val {
+      font-family: var(--font-head);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 0 8px var(--neon-cyan);
+      line-height: 1;
+    }
+
+    .hud-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    /* Neon Progress Visualizer */
+    .progress-wrapper {
+      margin-bottom: 1.25rem;
+    }
+
+    .progress-stats {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 16px;
+      background: rgba(3, 7, 18, 0.9);
+      border: 1px solid var(--panel-border);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      padding: 2px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+      box-shadow: 0 0 12px var(--neon-cyan);
+      width: 0%;
+      transition: width 0.5s ease-in-out;
+      border-radius: 2px;
+    }
+
+    .pills-grid {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .cyber-pill {
+      background: rgba(0, 243, 255, 0.05);
+      border: 1px solid rgba(0, 243, 255, 0.2);
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cyber-pill strong {
+      color: var(--neon-cyan);
+      font-size: 1.1rem;
+    }
+
+    /* Controls & Inputs */
+    .controls-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .cyber-form {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .cyber-input {
+      flex: 1;
+      background: rgba(3, 7, 18, 0.8);
+      border: 1px solid var(--panel-border);
+      color: #fff;
+      font-family: var(--font-mono);
+      padding: 0.65rem 1rem;
+      border-radius: 4px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .cyber-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+    }
+
+    .cyber-btn {
+      background: rgba(0, 243, 255, 0.15);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-family: var(--font-head);
+      font-size: 0.85rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 4px;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.2s ease;
+    }
+
+    .cyber-btn:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 15px var(--neon-cyan);
+    }
+
+    .cyber-btn-magenta {
+      border-color: var(--neon-magenta);
+      color: var(--neon-magenta);
+      background: rgba(255, 0, 127, 0.15);
+    }
+
+    .cyber-btn-magenta:hover {
+      background: var(--neon-magenta);
+      color: #fff;
+      box-shadow: 0 0 15px var(--neon-magenta);
+    }
+
+    /* Filter & Search Bar */
+    .filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--text-dim);
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active, .filter-btn:hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      background: rgba(0, 243, 255, 0.1);
+    }
+
+    /* Repository List */
+    .repo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .repo-card {
+      background: rgba(10, 15, 30, 0.85);
+      border: 1px solid rgba(0, 243, 255, 0.15);
+      border-left: 4px solid var(--text-dim);
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      transition: all 0.25s ease;
+    }
+
+    .repo-card:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+      transform: translateX(4px);
+    }
+
+    .repo-card.status-in-progress {
+      border-left-color: var(--neon-yellow);
+    }
+
+    .repo-card.status-completed {
+      border-left-color: var(--neon-green);
+      opacity: 0.85;
+    }
+
+    .repo-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .cyber-checkbox {
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .cyber-checkbox:checked {
+      background: var(--neon-green);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 10px var(--neon-green);
+    }
+
+    .cyber-checkbox:checked::after {
+      content: '✓';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #000;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .repo-title {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      word-break: break-word;
+    }
+
+    .repo-card.status-completed .repo-title {
+      text-decoration: line-through;
+      color: var(--text-dim);
+    }
+
+    .repo-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 0.3rem 0.75rem;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .badge-not-started {
+      background: rgba(100, 116, 139, 0.2);
+      color: var(--text-dim);
+      border: 1px solid var(--text-dim);
+    }
+
+    .badge-in-progress {
+      background: rgba(250, 204, 21, 0.15);
+      color: var(--neon-yellow);
+      border: 1px solid var(--neon-yellow);
+      box-shadow: 0 0 8px rgba(250, 204, 21, 0.2);
+    }
+
+    .badge-completed {
+      background: rgba(0, 255, 102, 0.15);
+      color: var(--neon-green);
+      border: 1px solid var(--neon-green);
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.2);
+    }
+
+    .btn-delete {
+      background: transparent;
+      border: 1px solid rgba(255, 0, 127, 0.3);
+      color: var(--neon-magenta);
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all 0.2s;
+    }
+
+    .btn-delete:hover {
+      background: var(--neon-magenta);
+      color: #fff;
+      box-shadow: 0 0 10px var(--neon-magenta);
+    }
+
+    /* Google Sync Panel */
+    .sync-panel {
+      display: none;
+      margin-top: 1rem;
+      background: rgba(3, 7, 18, 0.9);
+      border: 1px solid var(--neon-magenta);
+      border-radius: 6px;
+      padding: 1.25rem;
+    }
+
+    .sync-panel.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Inline Sync Status Text Indicator */
+    .sync-status-msg {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      min-height: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .sync-status-msg.sending {
+      color: var(--neon-cyan);
+      animation: pulseGlitch 1.2s infinite alternate;
+    }
+
+    .sync-status-msg.sending::after {
+      content: '';
+      display: inline-block;
+      animation: dotsAnimation 1.5s infinite steps(4, jump-start);
+    }
+
+    .sync-status-msg.success {
+      color: var(--neon-green);
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+
+    .sync-status-msg.error {
+      color: var(--neon-magenta);
+      text-shadow: 0 0 8px var(--neon-magenta);
+    }
+
+    @keyframes pulseGlitch {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; text-shadow: 0 0 8px var(--neon-cyan); }
+    }
+
+    @keyframes dotsAnimation {
+      0% { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width: 650px) {
+      .countdown-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .repo-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .repo-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .cyber-title {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Matrix Canvas Background -->
+  <canvas id="cyber-bg"></canvas>
+  <div class="crt-overlay"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1 class="cyber-title">FRCR RAD // COMMAND DECK</h1>
+      <p class="cyber-subtitle">Radiology SBA Exam Revision & Repository Tracker 2026</p>
+    </header>
+
+    <!-- HUD Countdown Card -->
+    <div class="cyber-panel">
+      <div class="cyber-panel-title">TARGET EXAM COUNTDOWN // 27 OCT 2026</div>
+      <div class="countdown-grid">
+        <div class="hud-box">
+          <div class="hud-val" id="cd-days">00</div>
+          <div class="hud-label">Days</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-val" id="cd-hours">00</div>
+          <div class="hud-label">Hours</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-val" id="cd-minutes">00</div>
+          <div class="hud-label">Minutes</div>
+        </div>
+        <div class="hud-box">
+          <div class="hud-val" id="cd-seconds">00</div>
+          <div class="hud-label">Seconds</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Progress Panel -->
+    <div class="cyber-panel">
+      <div class="cyber-panel-title">SYSTEM REVISION PROGRESS</div>
+      <div class="progress-wrapper">
+        <div class="progress-stats">
+          <span>COMPLETION RATE:</span>
+          <span id="progress-percentage" style="color: var(--neon-cyan); font-weight: bold;">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+      <div class="pills-grid">
+        <div class="cyber-pill">REPOS: <strong id="stat-total">0</strong></div>
+        <div class="cyber-pill">COMPLETED: <strong id="stat-completed" style="color: var(--neon-green);">0</strong></div>
+        <div class="cyber-pill">IN PROGRESS: <strong id="stat-in-progress" style="color: var(--neon-yellow);">0</strong></div>
+        <div class="cyber-pill">REMAINING: <strong id="stat-remaining" style="color: var(--neon-magenta);">0</strong></div>
+      </div>
+    </div>
+
+    <!-- Controls & Actions -->
+    <div class="cyber-panel">
+      <div class="controls-grid">
+        <form class="cyber-form" id="add-repo-form">
+          <input type="text" id="new-repo-title" class="cyber-input" placeholder="Enter SBA book or revision set title..." required />
+          <button type="submit" class="cyber-btn">+ ADD REPO</button>
+        </form>
+        <button class="cyber-btn cyber-btn-magenta" id="toggle-sync-btn">⚙️ GOOGLE SYNC</button>
+      </div>
+
+      <!-- Sync Panel -->
+      <div class="sync-panel" id="sync-panel">
+        <div class="cyber-panel-title" style="color: var(--neon-magenta);">GOOGLE SHEETS APPSCRIPT INTEGRATION</div>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-dim); margin-bottom: 0.75rem;">
+          Connect your custom Google Apps Script endpoint to sync revision statuses across devices.
+        </p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <input type="text" id="appscript-url" class="cyber-input" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" />
+          <button class="cyber-btn" id="sync-push-btn">PUSH DATA</button>
+          <button class="cyber-btn cyber-btn-magenta" id="sync-pull-btn">FETCH DATA</button>
+        </div>
+        <!-- Inline Animated Status Area -->
+        <div id="sync-status" class="sync-status-msg"></div>
+      </div>
+    </div>
+
+    <!-- Filter & Search Section -->
+    <div class="cyber-panel" style="padding: 1rem 1.5rem;">
+      <div class="controls-grid">
+        <div class="filter-bar">
+          <span style="font-family: var(--font-mono); color: var(--neon-cyan); font-size: 0.85rem;">FILTER:</span>
+          <button class="filter-btn active" data-filter="all">ALL</button>
+          <button class="filter-btn" data-filter="Completed">COMPLETED</button>
+          <button class="filter-btn" data-filter="In Progress">IN PROGRESS</button>
+          <button class="filter-btn" data-filter="Not Started">NOT STARTED</button>
+        </div>
+        <input type="text" id="search-input" class="cyber-input" placeholder="⚡ Search repo list..." style="max-width: 250px;" />
+      </div>
+    </div>
+
+    <!-- Repository Book List -->
+    <div class="repo-list" id="repo-list-container">
+      <!-- Dynamic Items -->
+    </div>
+  </div>
+
+  <script>
+    // Audio FX using Web Audio API
+    const AudioFX = {
+      ctx: null,
+      init() {
+        if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      },
+      playClick() {
+        this.init();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
+      },
+      playComplete() {
+        this.init();
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+        osc.frequency.setValueAtTime(659.25, this.ctx.currentTime + 0.08);
+        osc.frequency.setValueAtTime(783.99, this.ctx.currentTime + 0.16);
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.3);
+      }
+    };
+
+    // Matrix Rain Canvas Effect
+    const canvas = document.getElementById('cyber-bg');
+    const ctx = canvas.getContext('2d');
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const fontSize = 14;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(3, 7, 18, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00f3ff';
+      ctx.font = fontSize + 'px "Share Tech Mono", monospace';
+
+      columns = Math.floor(canvas.width / fontSize);
+      if (drops.length !== columns) drops = Array(columns).fill(1);
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 40);
+
+    // Default SBA Books and Revision Sets Repository
+    const defaultBooks = [
+      "[2008] Succeeding in the new FRCR Part 2A Exam.pdf",
+      "[2009] Get Through Final SBAs.pdf",
+      "[2009] Grainger and allison SBAs.pdf",
+      "[2009] SBA 2A Masterpass Modules 1-3.pdf",
+      "[2009] SBA 2A Masterpass Modules 4-6.pdf",
+      "[2010] Barret - FRCR SBAs.pdf",
+      "[2010] Gupta SBAs.pdf",
+      "[2010] SBA FRCR 2A Cambridge.pdf",
+      "[2012] SBA FRCR 2A Oxford.pdf",
+      "[2017] Get Through Final SBAs.pdf",
+      "[2021] The Final FRCR - Self-Assessment.pdf",
+      "DR Ram SBA revision set 1",
+      "DR Ram SBA revision set 2",
+      "DR Ram SBA revision set 3",
+      "DR Ram SBA revision set 4",
+      "DR Ram SBA revision set 5"
+    ];
+
+    let books = JSON.parse(localStorage.getItem('frcr_sba_cyber_books'));
+    if (!books || books.length === 0) {
+      books = defaultBooks.map((title, id) => ({
+        id: "repo-" + id + "-" + Date.now(),
+        title: title,
+        status: "Not Started"
+      }));
+    } else {
+      defaultBooks.forEach(defaultTitle => {
+        if (!books.some(b => b.title.toLowerCase() === defaultTitle.toLowerCase())) {
+          books.push({
+            id: "repo-" + Date.now() + "-" + Math.random().toString(36).substr(2, 4),
+            title: defaultTitle,
+            status: "Not Started"
+          });
+        }
+      });
+    }
+
+    let appScriptUrl = localStorage.getItem('frcr_appscript_url') || '';
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    // Target Exam Date: Oct 27, 2026
+    const EXAM_DATE = new Date('2026-10-27T00:00:00').getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = EXAM_DATE - now;
+
+      if (distance < 0) {
+        document.getElementById('cd-days').innerText = "00";
+        document.getElementById('cd-hours').innerText = "00";
+        document.getElementById('cd-minutes').innerText = "00";
+        document.getElementById('cd-seconds').innerText = "00";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
+      document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
+      document.getElementById('cd-minutes').innerText = String(minutes).padStart(2, '0');
+      document.getElementById('cd-seconds').innerText = String(seconds).padStart(2, '0');
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Render Function
+    function render() {
+      saveLocal();
+      const container = document.getElementById('repo-list-container');
+      container.innerHTML = '';
+
+      let completedCount = 0;
+      let inProgressCount = 0;
+
+      books.forEach(b => {
+        if (b.status === 'Completed') completedCount++;
+        else if (b.status === 'In Progress') inProgressCount++;
+      });
+
+      // Filter and Search logic
+      const filteredBooks = books.filter(b => {
+        const matchesFilter = currentFilter === 'all' || b.status === currentFilter;
+        const matchesSearch = b.title.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesFilter && matchesSearch;
+      });
+
+      filteredBooks.forEach(book => {
+        const card = document.createElement('div');
+        const statusClass = book.status === 'Completed' ? 'status-completed' : (book.status === 'In Progress' ? 'status-in-progress' : '');
+        card.className = `repo-card ${statusClass}`;
+
+        const badgeClass = book.status === 'Completed' ? 'badge-completed' : (book.status === 'In Progress' ? 'badge-in-progress' : 'badge-not-started');
+
+        card.innerHTML = `
+          <div class="repo-info">
+            <input type="checkbox" class="cyber-checkbox" ${book.status === 'Completed' ? 'checked' : ''} onchange="toggleComplete('${book.id}')" />
+            <span class="repo-title">${escapeHtml(book.title)}</span>
+          </div>
+          <div class="repo-actions">
+            <span class="status-badge ${badgeClass}" onclick="cycleStatus('${book.id}')" title="Click to update status">
+              ${book.status}
+            </span>
+            <button class="btn-delete" onclick="deleteBook('${book.id}')" title="Purge Record">✕</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      // Stats Update
+      const total = books.length;
+      const pct = total === 0 ? 0 : Math.round((completedCount / total) * 100);
+      document.getElementById('progress-bar').style.width = `${pct}%`;
+      document.getElementById('progress-percentage').innerText = `${pct}%`;
+      document.getElementById('stat-total').innerText = total;
+      document.getElementById('stat-completed').innerText = completedCount;
+      document.getElementById('stat-in-progress').innerText = inProgressCount;
+      document.getElementById('stat-remaining').innerText = total - completedCount;
+    }
+
+    function saveLocal() {
+      localStorage.setItem('frcr_sba_cyber_books', JSON.stringify(books));
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    window.toggleComplete = function(id) {
+      books = books.map(book => {
+        if (book.id === id) {
+          const newStatus = book.status === 'Completed' ? 'Not Started' : 'Completed';
+          if (newStatus === 'Completed') AudioFX.playComplete();
+          else AudioFX.playClick();
+          return { ...book, status: newStatus };
+        }
+        return book;
+      });
+      render();
+    };
+
+    window.cycleStatus = function(id) {
+      AudioFX.playClick();
+      const statuses = ['Not Started', 'In Progress', 'Completed'];
+      books = books.map(book => {
+        if (book.id === id) {
+          const currentIndex = statuses.indexOf(book.status);
+          const nextStatus = statuses[(currentIndex + 1) % statuses.length];
+          if (nextStatus === 'Completed') AudioFX.playComplete();
+          return { ...book, status: nextStatus };
+        }
+        return book;
+      });
+      render();
+    };
+
+    window.deleteBook = function(id) {
+      AudioFX.playClick();
+      if (confirm('SYSTEM WARNING: Purge selected repository record?')) {
+        books = books.filter(b => b.id !== id);
+        render();
+      }
+    };
+
+    document.getElementById('add-repo-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      AudioFX.playClick();
+      const input = document.getElementById('new-repo-title');
+      const title = input.value.trim();
+      if (title) {
+        books.push({
+          id: 'repo-' + Date.now(),
+          title: title,
+          status: 'Not Started'
+        });
+        input.value = '';
+        render();
+      }
+    });
+
+    // Filtering & Searching Event Listeners
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        AudioFX.playClick();
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentFilter = e.target.getAttribute('data-filter');
+        render();
+      });
+    });
+
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      render();
+    });
+
+    // Google Sync UI Toggle
+    document.getElementById('toggle-sync-btn').addEventListener('click', () => {
+      AudioFX.playClick();
+      const panel = document.getElementById('sync-panel');
+      panel.classList.toggle('active');
+    });
+
+    const appScriptInput = document.getElementById('appscript-url');
+    appScriptInput.value = appScriptUrl;
+    appScriptInput.addEventListener('change', (e) => {
+      appScriptUrl = e.target.value.trim();
+      localStorage.setItem('frcr_appscript_url', appScriptUrl);
+    });
+
+    // Google Push with Inline Animated Status Indicator
+    const syncStatusEl = document.getElementById('sync-status');
+
+    document.getElementById('sync-push-btn').addEventListener('click', async () => {
+      AudioFX.playClick();
+      if (!appScriptUrl) {
+        syncStatusEl.className = 'sync-status-msg error';
+        syncStatusEl.innerHTML = '⚡ ERR: APPS SCRIPT URL REQUIRED';
+        return;
+      }
+
+      syncStatusEl.className = 'sync-status-msg sending';
+      syncStatusEl.innerHTML = '⚡ TRANSMITTING DATA TO GOOGLE SHEET';
+
+      try {
+        await fetch(appScriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(books)
+        });
+        
+        AudioFX.playComplete();
+        syncStatusEl.className = 'sync-status-msg success';
+        syncStatusEl.innerHTML = '✓ DATA TRANSMITTED TO GOOGLE SHEET SUCCESSFULLY';
+      } catch (err) {
+        syncStatusEl.className = 'sync-status-msg error';
+        syncStatusEl.innerHTML = '✕ TRANSMISSION ERROR: ' + err.message.toUpperCase();
+      }
+    });
+
+    // Google Pull with Inline Animated Status Indicator
+    document.getElementById('sync-pull-btn').addEventListener('click', async () => {
+      AudioFX.playClick();
+      if (!appScriptUrl) {
+        syncStatusEl.className = 'sync-status-msg error';
+        syncStatusEl.innerHTML = '⚡ ERR: APPS SCRIPT URL REQUIRED';
+        return;
+      }
+
+      syncStatusEl.className = 'sync-status-msg sending';
+      syncStatusEl.innerHTML = '⚡ FETCHING DATA FROM GOOGLE SHEET';
+
+      try {
+        const res = await fetch(appScriptUrl);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          books = data;
+          render();
+          AudioFX.playComplete();
+          syncStatusEl.className = 'sync-status-msg success';
+          syncStatusEl.innerHTML = '✓ DATA LOADED FROM GOOGLE SHEET';
+        } else {
+          throw new Error('Invalid data format');
+        }
+      } catch (err) {
+        syncStatusEl.className = 'sync-status-msg error';
+        syncStatusEl.innerHTML = '✕ FETCH ERROR: ' + err.message.toUpperCase();
+      }
+    });
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
