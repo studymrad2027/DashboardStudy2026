@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CYBER_RAD // SBA 1 & 2 Command Deck</title>
+  <title>CYBER_RAD // FRCR Part 2A Command Deck</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -94,10 +94,10 @@
 
     .cyber-title {
       font-family: var(--font-head);
-      font-size: 2.4rem;
+      font-size: clamp(1.4rem, 4vw + 0.5rem, 2.4rem);
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       color: #fff;
       text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan);
       display: inline-block;
@@ -107,8 +107,8 @@
     .cyber-subtitle {
       font-family: var(--font-mono);
       color: var(--neon-magenta);
-      letter-spacing: 2px;
-      font-size: 0.95rem;
+      letter-spacing: 1.5px;
+      font-size: clamp(0.75rem, 2vw, 0.95rem);
       margin-top: 0.25rem;
       text-transform: uppercase;
     }
@@ -140,7 +140,7 @@
 
     .cyber-panel-title {
       font-family: var(--font-head);
-      font-size: 1rem;
+      font-size: clamp(0.8rem, 2.5vw, 1rem);
       letter-spacing: 2px;
       color: var(--neon-cyan);
       text-transform: uppercase;
@@ -182,7 +182,7 @@
 
     .hud-val {
       font-family: var(--font-head);
-      font-size: 2.5rem;
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
       font-weight: 800;
       color: #fff;
       text-shadow: 0 0 8px var(--neon-cyan);
@@ -300,6 +300,7 @@
       letter-spacing: 1px;
       text-transform: uppercase;
       transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .cyber-btn:hover {
@@ -323,7 +324,7 @@
     /* Filter & Search Bar */
     .filter-bar {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.5rem;
       align-items: center;
       flex-wrap: wrap;
     }
@@ -510,6 +511,7 @@
       align-items: center;
       gap: 0.5rem;
       transition: all 0.3s ease;
+      word-break: break-word;
     }
 
     .sync-status-msg.sending {
@@ -550,21 +552,86 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Responsive */
-    @media (max-width: 650px) {
+    /* AUTOMATIC MOBILE PROPORTIONS AUTO-FIT */
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem 0.5rem 2.5rem 0.5rem;
+      }
+
+      .cyber-panel {
+        padding: 1rem;
+      }
+
       .countdown-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
       }
-      .repo-card {
+
+      .hud-box {
+        padding: 0.75rem 0.25rem;
+      }
+
+      .pills-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+
+      .cyber-pill {
+        justify-content: space-between;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      .controls-grid {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: stretch;
       }
-      .repo-actions {
+
+      .cyber-form {
+        flex-direction: column;
+        min-width: 100%;
+      }
+
+      .cyber-btn {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 1rem;
+      }
+
+      #search-input {
+        max-width: 100% !important;
+        width: 100%;
+      }
+
+      .filter-bar {
         width: 100%;
         justify-content: space-between;
       }
-      .cyber-title {
-        font-size: 1.8rem;
+
+      .filter-btn {
+        flex: 1;
+        text-align: center;
+        padding: 0.4rem 0.25rem;
+        font-size: 0.75rem;
+      }
+
+      .repo-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.85rem 1rem;
+      }
+
+      .repo-actions {
+        width: 100%;
+        justify-content: space-between;
+        border-top: 1px dashed rgba(0, 243, 255, 0.15);
+        padding-top: 0.6rem;
+      }
+
+      .sync-panel div[style*="display: flex"] {
+        flex-direction: column;
       }
     }
   </style>
@@ -578,7 +645,7 @@
   <div class="container">
     <!-- Header -->
     <header>
-      <h1 class="cyber-title">MASTER RAD // COMMAND DECK</h1>
+      <h1 class="cyber-title">FRCR RAD // COMMAND DECK</h1>
       <p class="cyber-subtitle">Radiology SBA Exam Revision & Repository Tracker 2026</p>
     </header>
 
@@ -655,11 +722,10 @@
     <div class="cyber-panel" style="padding: 1rem 1.5rem;">
       <div class="controls-grid">
         <div class="filter-bar">
-          <span style="font-family: var(--font-mono); color: var(--neon-cyan); font-size: 0.85rem;">FILTER:</span>
           <button class="filter-btn active" data-filter="all">ALL</button>
-          <button class="filter-btn" data-filter="Completed">COMPLETED</button>
-          <button class="filter-btn" data-filter="In Progress">IN PROGRESS</button>
-          <button class="filter-btn" data-filter="Not Started">NOT STARTED</button>
+          <button class="filter-btn" data-filter="Completed">DONE</button>
+          <button class="filter-btn" data-filter="In Progress">DOING</button>
+          <button class="filter-btn" data-filter="Not Started">NEW</button>
         </div>
         <input type="text" id="search-input" class="cyber-input" placeholder="⚡ Search repo list..." style="max-width: 250px;" />
       </div>
